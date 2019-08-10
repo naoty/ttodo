@@ -7,9 +7,19 @@ import (
 
 func main() {
 	app := tview.NewApplication()
+
+	// To reset background color of previous selected rows
+	// https://github.com/rivo/tview/issues/270
+	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
+		s.Clear()
+		return false
+	})
+
 	table := tview.NewTable().
 		SetSelectable(true, false).
 		SetSelectedStyle(tcell.ColorDefault, tcell.Color100, 0)
+
+	table.Box.SetBackgroundColor(tcell.ColorDefault)
 
 	table.SetCell(0, 0, tview.NewTableCell("Done").SetSelectable(false))
 	table.SetCell(0, 1, tview.NewTableCell("Deadline").SetSelectable(false))
