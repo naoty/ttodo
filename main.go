@@ -6,11 +6,10 @@ import (
 )
 
 func main() {
-	// Keep background color as users set
-	tview.Styles.PrimitiveBackgroundColor = tcell.ColorDefault
-
 	app := tview.NewApplication()
-	table := tview.NewTable()
+	table := tview.NewTable().
+		SetSelectable(true, false).
+		SetSelectedStyle(tcell.ColorDefault, tcell.Color100, 0)
 
 	table.SetCellSimple(0, 0, "[ ]")
 	table.SetCellSimple(0, 1, "2019-08-10")
