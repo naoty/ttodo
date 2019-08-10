@@ -24,7 +24,7 @@ func main() {
 	table.SetCell(0, 0, tview.NewTableCell("Done").SetSelectable(false))
 	table.SetCell(0, 1, tview.NewTableCell("Deadline").SetSelectable(false))
 	table.SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false))
-	table.SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false))
+	table.SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1))
 	table.SetCellSimple(1, 0, "[ ]")
 	table.SetCellSimple(1, 1, "2019-08-10")
 	table.SetCellSimple(1, 2, "naoty")
