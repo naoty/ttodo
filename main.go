@@ -90,19 +90,12 @@ func main() {
 		}
 	})
 
-	form := tview.NewForm().
-		AddInputField("Title", "", 0, nil, nil).
-		AddInputField("Deadline", "", 0, nil, nil).
-		AddInputField("Assignee", "", 0, nil, nil).
-		AddInputField("Description", "", 0, nil, nil).
-		AddButton("Save", func() {
-			// TODO: save a TODO
-			pages.SwitchToPage("main")
-		}).
-		AddButton("Quit", func() {
-			pages.SwitchToPage("main")
-		})
-	form.SetBackgroundColor(tcell.ColorDefault)
+	form := views.NewForm(func() {
+		// TODO: save a TODO
+		pages.SwitchToPage("main")
+	}, func() {
+		pages.SwitchToPage("main")
+	})
 
 	pages.
 		AddPage("main", flex, true, true).
