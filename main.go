@@ -24,16 +24,6 @@ func main() {
 	pages := tview.NewPages()
 	pages.Box.SetBackgroundColor(tcell.ColorDefault)
 
-	table := tview.NewTable().
-		SetSelectable(true, false).
-		SetSelectedStyle(tcell.ColorDefault, tcell.Color100, 0)
-	table.Box.SetBackgroundColor(tcell.ColorDefault)
-
-	table.SetCell(0, 0, tview.NewTableCell("Done").SetSelectable(false))
-	table.SetCell(0, 1, tview.NewTableCell("Deadline").SetSelectable(false))
-	table.SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false))
-	table.SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1))
-
 	dir := os.Getenv("TODO_PATH")
 	if dir == "" {
 		dir = os.Getenv("HOME")
@@ -45,19 +35,10 @@ func main() {
 		panic(err)
 	}
 
-	for i, todo := range todos {
-		if todo.Done {
-			table.SetCellSimple(i+1, 0, tview.Escape("[x]"))
-		} else {
-			table.SetCellSimple(i+1, 0, "[ ]")
-		}
-		if todo.Deadline == nil {
-			table.SetCellSimple(i+1, 1, "")
-		} else {
-			table.SetCellSimple(i+1, 1, (*todo.Deadline).Format("2006-01-02"))
-		}
-		table.SetCellSimple(i+1, 2, todo.Assignee)
-		table.SetCellSimple(i+1, 3, todo.Title)
+	table := views.NewTable()
+
+	for _, todo := range todos {
+		table.AddTodoRow(todo)
 	}
 
 	descriptionView := views.NewDescription()
