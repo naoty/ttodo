@@ -39,12 +39,27 @@ func main() {
 	textView := tview.NewTextView().SetText("これはダミーです。")
 	textView.Box.SetBackgroundColor(tcell.ColorDefault)
 
-	flex := tview.NewFlex().
+	descriptionView := tview.NewFlex().
 		SetDirection(tview.FlexRow).
-		AddItem(table, 0, 1, true).
 		AddItem(border, 1, 0, false).
 		AddItem(textView, 0, 1, false)
+	descriptionView.Box.SetBackgroundColor(tcell.ColorDefault)
+
+	flex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(table, 0, 1, true)
 	flex.Box.SetBackgroundColor(tcell.ColorDefault)
+
+	descriptionViewShown := false
+	table.SetSelectedFunc(func(row, column int) {
+		if descriptionViewShown {
+			descriptionViewShown = false
+			flex.RemoveItem(descriptionView)
+		} else {
+			descriptionViewShown = true
+			flex.AddItem(descriptionView, 0, 1, true)
+		}
+	})
 
 	if err := app.SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
 		panic(err)
