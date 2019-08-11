@@ -81,9 +81,11 @@ func main() {
 		} else {
 			descriptionViewShown = true
 
-			todo := todos[row-1]
-			textView.SetText(todo.description)
-			flex.AddItem(descriptionView, 0, 1, true)
+			if row >= 1 && row <= len(todos) {
+				todo := todos[row-1]
+				textView.SetText(todo.description)
+				flex.AddItem(descriptionView, 0, 1, true)
+			}
 		}
 	})
 
@@ -92,8 +94,10 @@ func main() {
 			return
 		}
 
-		todo := todos[row-1]
-		textView.SetText(todo.description)
+		if row >= 1 && row <= len(todos) {
+			todo := todos[row-1]
+			textView.SetText(todo.description)
+		}
 	})
 
 	if err := app.SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
