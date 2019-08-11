@@ -14,6 +14,16 @@ import (
 func main() {
 	app := tview.NewApplication()
 
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'q':
+			app.Stop()
+			return nil
+		default:
+			return event
+		}
+	})
+
 	// To reset background color of previous selected rows
 	// https://github.com/rivo/tview/issues/270
 	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
