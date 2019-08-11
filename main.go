@@ -1,6 +1,8 @@
 package main
 
 import (
+	"time"
+
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 )
@@ -24,14 +26,35 @@ func main() {
 	table.SetCell(0, 1, tview.NewTableCell("Deadline").SetSelectable(false))
 	table.SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false))
 	table.SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1))
-	table.SetCellSimple(1, 0, "[ ]")
-	table.SetCellSimple(1, 1, "2019-08-10")
-	table.SetCellSimple(1, 2, "naoty")
-	table.SetCellSimple(1, 3, "TODOのリストを表示する")
-	table.SetCellSimple(2, 0, "[ ]")
-	table.SetCellSimple(2, 1, "2019-08-10")
-	table.SetCellSimple(2, 2, "naoty")
-	table.SetCellSimple(2, 3, "TODOの詳細を表示する")
+
+	jst, _ := time.LoadLocation("Asia/Tokyo")
+	todos := []todo{
+		todo{
+			title:       "TODOのリストを表示する",
+			description: "TODOのリストを表形式で表示したい",
+			assignee:    "naoty",
+			deadline:    time.Date(2019, 8, 10, 0, 0, 0, 0, jst),
+			done:        true,
+		},
+		todo{
+			title:       "TODOの詳細を表示する",
+			description: "TODOの詳細を表の下に表示したい。できればEnterで表示/非表示を切り替えたい",
+			assignee:    "naoty",
+			deadline:    time.Date(2019, 8, 11, 0, 0, 0, 0, jst),
+			done:        false,
+		},
+	}
+
+	for i, todo := range todos {
+		if todo.done {
+			table.SetCellSimple(i+1, 0, tview.Escape("[x]"))
+		} else {
+			table.SetCellSimple(i+1, 0, "[ ]")
+		}
+		table.SetCellSimple(i+1, 1, todo.deadline.Format("2006-01-02"))
+		table.SetCellSimple(i+1, 2, todo.assignee)
+		table.SetCellSimple(i+1, 3, todo.title)
+	}
 
 	border := tview.NewTextView().SetText("Description")
 	border.Box.SetBackgroundColor(tcell.Color32)
