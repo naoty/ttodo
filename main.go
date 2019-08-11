@@ -59,7 +59,7 @@ func main() {
 	border := tview.NewTextView().SetText("Description")
 	border.Box.SetBackgroundColor(tcell.Color32)
 
-	textView := tview.NewTextView().SetText("これはダミーです。")
+	textView := tview.NewTextView()
 	textView.Box.SetBackgroundColor(tcell.ColorDefault)
 
 	descriptionView := tview.NewFlex().
@@ -80,8 +80,20 @@ func main() {
 			flex.RemoveItem(descriptionView)
 		} else {
 			descriptionViewShown = true
+
+			todo := todos[row-1]
+			textView.SetText(todo.description)
 			flex.AddItem(descriptionView, 0, 1, true)
 		}
+	})
+
+	table.SetSelectionChangedFunc(func(row, column int) {
+		if !descriptionViewShown {
+			return
+		}
+
+		todo := todos[row-1]
+		textView.SetText(todo.description)
 	})
 
 	if err := app.SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
