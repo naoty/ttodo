@@ -2,10 +2,11 @@ package main
 
 import "time"
 
-type todo struct {
-	title       string
-	description string
-	assignee    string
-	deadline    time.Time
-	done        bool
+// Todo represents a TODO.
+type Todo struct {
+	Title       string     `json:"title"`
+	Description string     `json:"description"`
+	Assignee    string     `json:"assignee"`
+	Deadline    *time.Time `json:"deadline"`
+	Done        bool       `json:"done"`
 }
