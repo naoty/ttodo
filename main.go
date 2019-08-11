@@ -18,7 +18,6 @@ func main() {
 	table := tview.NewTable().
 		SetSelectable(true, false).
 		SetSelectedStyle(tcell.ColorDefault, tcell.Color100, 0)
-
 	table.Box.SetBackgroundColor(tcell.ColorDefault)
 
 	table.SetCell(0, 0, tview.NewTableCell("Done").SetSelectable(false))
@@ -34,7 +33,20 @@ func main() {
 	table.SetCellSimple(2, 2, "naoty")
 	table.SetCellSimple(2, 3, "TODOの詳細を表示する")
 
-	if err := app.SetRoot(table, true).SetFocus(table).Run(); err != nil {
+	border := tview.NewTextView().SetText("Description")
+	border.Box.SetBackgroundColor(tcell.Color32)
+
+	textView := tview.NewTextView().SetText("これはダミーです。")
+	textView.Box.SetBackgroundColor(tcell.ColorDefault)
+
+	flex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(table, 0, 1, true).
+		AddItem(border, 1, 0, false).
+		AddItem(textView, 0, 1, false)
+	flex.Box.SetBackgroundColor(tcell.ColorDefault)
+
+	if err := app.SetRoot(flex, true).SetFocus(flex).Run(); err != nil {
 		panic(err)
 	}
 }
