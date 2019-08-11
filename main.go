@@ -1,12 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
+	"github.com/naoty/ttodo/todo"
 	"github.com/naoty/ttodo/views"
 
 	"github.com/gdamore/tcell"
@@ -36,7 +34,12 @@ func main() {
 	table.SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false))
 	table.SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1))
 
-	todos, err := loadTodos()
+	dir := os.Getenv("TODO_PATH")
+	if dir == "" {
+		dir = os.Getenv("HOME")
+	}
+	path := filepath.Join(dir, ".todo.json")
+	todos, err := todo.LoadTodos(path)
 
 	if err != nil {
 		panic(err)
@@ -119,26 +122,4 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-}
-
-func loadTodos() ([]Todo, error) {
-	dir := os.Getenv("TODO_PATH")
-	if dir == "" {
-		dir = os.Getenv("HOME")
-	}
-	path := filepath.Join(dir, ".todo.json")
-	contents, err := ioutil.ReadFile(path)
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to read data: %v", err)
-	}
-
-	var todos []Todo
-	err = json.Unmarshal(contents, &todos)
-
-	if err != nil {
-		return nil, fmt.Errorf("Failed to decode data: %v", err)
-	}
-
-	return todos, nil
 }
