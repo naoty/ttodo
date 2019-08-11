@@ -14,22 +14,15 @@ import (
 func main() {
 	app := tview.NewApplication()
 
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Rune() {
-		case 'q':
-			app.Stop()
-			return nil
-		default:
-			return event
-		}
-	})
-
 	// To reset background color of previous selected rows
 	// https://github.com/rivo/tview/issues/270
 	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
 		s.Clear()
 		return false
 	})
+
+	pages := tview.NewPages()
+	pages.Box.SetBackgroundColor(tcell.ColorDefault)
 
 	table := tview.NewTable().
 		SetSelectable(true, false).
@@ -106,7 +99,38 @@ func main() {
 		}
 	})
 
-	err = app.SetRoot(flex, true).SetFocus(flex).Run()
+	form := tview.NewForm().
+		AddInputField("Title", "", 0, nil, nil).
+		AddInputField("Deadline", "", 0, nil, nil).
+		AddInputField("Assignee", "", 0, nil, nil).
+		AddInputField("Description", "", 0, nil, nil).
+		AddButton("Save", func() {
+			// TODO: save a TODO
+			pages.SwitchToPage("main")
+		}).
+		AddButton("Quit", func() {
+			pages.SwitchToPage("main")
+		})
+	form.SetBackgroundColor(tcell.ColorDefault)
+
+	pages.
+		AddPage("main", flex, true, true).
+		AddPage("new", form, true, false)
+
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'c':
+			pages.SwitchToPage("new")
+			return nil
+		case 'q':
+			app.Stop()
+			return nil
+		default:
+			return event
+		}
+	})
+
+	err = app.SetRoot(pages, true).Run()
 
 	if err != nil {
 		panic(err)
