@@ -104,7 +104,11 @@ func main() {
 }
 
 func loadTodos() ([]Todo, error) {
-	path := filepath.Join(os.Getenv("HOME"), ".todo.json")
+	dir := os.Getenv("TODO_PATH")
+	if dir == "" {
+		dir = os.Getenv("HOME")
+	}
+	path := filepath.Join(dir, ".todo.json")
 	contents, err := ioutil.ReadFile(path)
 
 	if err != nil {
