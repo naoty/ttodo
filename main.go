@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/naoty/ttodo/views"
+
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 )
@@ -55,47 +57,36 @@ func main() {
 		table.SetCellSimple(i+1, 3, todo.Title)
 	}
 
-	border := tview.NewTextView().SetText("Description")
-	border.Box.SetBackgroundColor(tcell.Color32)
-
-	textView := tview.NewTextView()
-	textView.Box.SetBackgroundColor(tcell.ColorDefault)
-
-	DescriptionView := tview.NewFlex().
-		SetDirection(tview.FlexRow).
-		AddItem(border, 1, 0, false).
-		AddItem(textView, 0, 1, false)
-	DescriptionView.Box.SetBackgroundColor(tcell.ColorDefault)
+	descriptionView := views.NewDescription()
 
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(table, 0, 1, true)
 	flex.Box.SetBackgroundColor(tcell.ColorDefault)
 
-	DescriptionViewShown := false
 	table.SetSelectedFunc(func(row, column int) {
-		if DescriptionViewShown {
-			DescriptionViewShown = false
-			flex.RemoveItem(DescriptionView)
+		if descriptionView.IsShown {
+			descriptionView.IsShown = false
+			flex.RemoveItem(descriptionView)
 		} else {
-			DescriptionViewShown = true
+			descriptionView.IsShown = true
 
 			if row >= 1 && row <= len(todos) {
 				todo := todos[row-1]
-				textView.SetText(todo.Description)
-				flex.AddItem(DescriptionView, 0, 1, true)
+				descriptionView.SetText(todo.Description)
+				flex.AddItem(descriptionView, 0, 1, true)
 			}
 		}
 	})
 
 	table.SetSelectionChangedFunc(func(row, column int) {
-		if !DescriptionViewShown {
+		if !descriptionView.IsShown {
 			return
 		}
 
 		if row >= 1 && row <= len(todos) {
 			todo := todos[row-1]
-			textView.SetText(todo.Description)
+			descriptionView.SetText(todo.Description)
 		}
 	})
 
