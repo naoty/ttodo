@@ -40,6 +40,12 @@ func NewForm(saveHandler func(td todo.Todo), quitHandler func()) *Form {
 			Deadline:    &deadline,
 			Assignee:    assigneeInput.GetText(),
 		}
+
+		titleInput.SetText("")
+		descriptionInput.SetText("")
+		deadlineInput.SetText("")
+		assigneeInput.SetText("")
+
 		saveHandler(td)
 	})
 	form.AddButton("Quit", quitHandler)
