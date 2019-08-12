@@ -41,12 +41,16 @@ func main() {
 		table.AddTodoRow(todo)
 	}
 
-	descriptionView := views.NewDescription()
-
 	flex := tview.NewFlex().
 		SetDirection(tview.FlexRow).
 		AddItem(table, 0, 1, true)
-	flex.Box.SetBackgroundColor(tcell.ColorDefault)
+	flex.SetBackgroundColor(tcell.ColorDefault)
+
+	debug := tview.NewTextView()
+	debug.SetBackgroundColor(tcell.Color60)
+	flex.AddItem(debug, 1, 0, false)
+
+	descriptionView := views.NewDescription()
 
 	table.SetSelectedFunc(func(row, column int) {
 		if descriptionView.IsShown {
