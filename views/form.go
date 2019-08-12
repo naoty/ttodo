@@ -31,10 +31,16 @@ func NewForm(saveHandler func(td todo.Todo), quitHandler func()) *Form {
 	form.AddFormItem(descriptionInput)
 
 	form.AddButton("Save", func() {
+		title := titleInput.GetText()
+
+		if title == "" {
+			return
+		}
+
 		deadline, _ := time.Parse("2006-01-02", deadlineInput.GetText())
 
 		td := todo.Todo{
-			Title:       titleInput.GetText(),
+			Title:       title,
 			Description: descriptionInput.GetText(),
 			Done:        false,
 			Deadline:    &deadline,
