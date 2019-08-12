@@ -51,3 +51,17 @@ func (t *Table) AddTodoRow(td todo.Todo) {
 	t.SetCellSimple(row, 2, td.Assignee)
 	t.SetCellSimple(row, 3, td.Title)
 }
+
+// UpdateTodoRows update rows to display todos.
+func (t *Table) UpdateTodoRows(todos []todo.Todo) {
+	total := t.GetRowCount()
+
+	// Remove rows except for headers
+	for row := total - 1; row > 0; row-- {
+		t.RemoveRow(row)
+	}
+
+	for _, todo := range todos {
+		t.AddTodoRow(todo)
+	}
+}

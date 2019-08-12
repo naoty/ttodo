@@ -81,6 +81,13 @@ func main() {
 			panic(err)
 		}
 
+		todos, err = todo.LoadTodos(todoPath)
+
+		if err != nil {
+			panic(err)
+		}
+
+		table.UpdateTodoRows(todos)
 		pages.SwitchToPage("main")
 	}, func() {
 		pages.SwitchToPage("main")
