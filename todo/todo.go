@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"strings"
 	"time"
 )
 
@@ -32,4 +33,40 @@ func LoadTodos(path string) ([]Todo, error) {
 	}
 
 	return todos, nil
+}
+
+// SaveTodos encodes todos and writes them into file at given path.
+func SaveTodos(todos []Todo, path string) error {
+	indent := strings.Repeat(" ", 4)
+	json, err := json.MarshalIndent(todos, "", indent)
+
+	if err != nil {
+		return fmt.Errorf("Failed to encode data: %v", err)
+	}
+
+	err = ioutil.WriteFile(path, json, 0644)
+
+	if err != nil {
+		return fmt.Errorf("Failed to write data: %v", err)
+	}
+
+	return nil
+}
+
+// SaveTodo saves a TODO into file at given path.
+func SaveTodo(td Todo, path string) error {
+	todos, err := LoadTodos(path)
+
+	if err != nil {
+		return err
+	}
+
+	todos = append(todos, td)
+	err = SaveTodos(todos, path)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

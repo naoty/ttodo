@@ -28,8 +28,8 @@ func main() {
 	if dir == "" {
 		dir = os.Getenv("HOME")
 	}
-	path := filepath.Join(dir, ".todo.json")
-	todos, err := todo.LoadTodos(path)
+	todoPath := filepath.Join(dir, ".todo.json")
+	todos, err := todo.LoadTodos(todoPath)
 
 	if err != nil {
 		panic(err)
@@ -74,8 +74,13 @@ func main() {
 		}
 	})
 
-	form := views.NewForm(func() {
-		// TODO: save a TODO
+	form := views.NewForm(func(td todo.Todo) {
+		err := todo.SaveTodo(td, todoPath)
+
+		if err != nil {
+			panic(err)
+		}
+
 		pages.SwitchToPage("main")
 	}, func() {
 		pages.SwitchToPage("main")
