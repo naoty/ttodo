@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
+	"github.com/naoty/ttodo/todo"
 	"github.com/naoty/ttodo/views"
 )
 
@@ -20,9 +22,31 @@ func main() {
 		}
 	}
 
-	err := views.NewApplication().Run()
+	file, err := os.Open(todoPath())
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	store := todo.GetStore(file)
+	err = store.LoadTodos()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = views.NewApplication().Run()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func todoPath() string {
+	dir := os.Getenv("TODO_PATH")
+	if dir == "" {
+		dir = os.Getenv("HOME")
+	}
+
+	return filepath.Join(dir, ".todo.json")
 }
