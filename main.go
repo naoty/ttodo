@@ -2,7 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+
+	"github.com/naoty/ttodo/views"
 )
 
 // Version represents the version of this application.
@@ -15,5 +18,11 @@ func main() {
 			fmt.Println(Version)
 			os.Exit(0)
 		}
+	}
+
+	err := views.NewApplication().Run()
+
+	if err != nil {
+		log.Fatal(err)
 	}
 }
