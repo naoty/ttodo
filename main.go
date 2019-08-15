@@ -29,13 +29,12 @@ func main() {
 	}
 
 	store := todo.GetStore(file)
-	err = store.LoadTodos()
+	app := views.NewApplication()
+	app.Subscribe(store)
 
-	if err != nil {
-		log.Fatal(err)
-	}
+	store.LoadTodos()
 
-	err = views.NewApplication().Run()
+	err = app.Run()
 
 	if err != nil {
 		log.Fatal(err)
