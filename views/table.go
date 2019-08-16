@@ -38,6 +38,17 @@ func (table *Table) SetSelectedFunc(f func(todo.Todo)) {
 	})
 }
 
+// SetSelectionChangedFunc sets wrapper function to pass selected todo to
+// original function.
+func (table *Table) SetSelectionChangedFunc(f func(todo todo.Todo)) {
+	table.Table.SetSelectionChangedFunc(func(row, column int) {
+		if row > 0 && row <= len(table.todos) {
+			todo := table.todos[row-1]
+			f(todo)
+		}
+	})
+}
+
 // Update updates rows along with given todos.
 func (table *Table) Update(todos []todo.Todo) {
 	table.todos = todos

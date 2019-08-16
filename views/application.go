@@ -34,6 +34,12 @@ func NewApplication() *Application {
 		}
 	})
 
+	table.SetSelectionChangedFunc(func(todo todo.Todo) {
+		if description.IsShown {
+			description.SetText(todo.Description)
+		}
+	})
+
 	app := tview.NewApplication().
 		SetRoot(flex, true)
 
