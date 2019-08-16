@@ -17,8 +17,25 @@ type Application struct {
 func NewApplication() *Application {
 	table := NewTable()
 
+	description := NewDescription()
+
+	flex := tview.NewFlex().
+		SetDirection(tview.FlexRow).
+		AddItem(table, 0, 1, true)
+
+	table.SetSelectedFunc(func(todo todo.Todo) {
+		if description.IsShown {
+			description.IsShown = false
+			flex.RemoveItem(description)
+		} else {
+			description.IsShown = true
+			description.SetText(todo.Description)
+			flex.AddItem(description, 0, 1, false)
+		}
+	})
+
 	app := tview.NewApplication().
-		SetRoot(table, true)
+		SetRoot(flex, true)
 
 	return &Application{
 		Application: app,

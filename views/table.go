@@ -8,6 +8,8 @@ import (
 // Table represents a table to list TODOs.
 type Table struct {
 	*tview.Table
+
+	todos []todo.Todo
 }
 
 // NewTable returns a new Table.
@@ -19,11 +21,27 @@ func NewTable() *Table {
 		SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false)).
 		SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1))
 
-	return &Table{table}
+	return &Table{
+		Table: table,
+		todos: []todo.Todo{},
+	}
+}
+
+// SetSelectedFunc sets wrapper function to pass selected todo to original
+// function.
+func (table *Table) SetSelectedFunc(f func(todo.Todo)) {
+	table.Table.SetSelectedFunc(func(row, column int) {
+		if row > 0 && row <= len(table.todos) {
+			todo := table.todos[row-1]
+			f(todo)
+		}
+	})
 }
 
 // Update updates rows along with given todos.
 func (table *Table) Update(todos []todo.Todo) {
+	table.todos = todos
+
 	for row := table.GetRowCount(); row > 0; row-- {
 		table.RemoveRow(row)
 	}
