@@ -1,6 +1,7 @@
 package views
 
 import (
+	"github.com/gdamore/tcell"
 	"github.com/naoty/ttodo/todo"
 	"github.com/rivo/tview"
 )
@@ -15,6 +16,11 @@ type Application struct {
 
 // NewApplication initializes and returns Application.
 func NewApplication() *Application {
+	tview.Styles = tview.Theme{
+		PrimitiveBackgroundColor: tcell.ColorDefault,
+		PrimaryTextColor:         tcell.ColorDefault,
+	}
+
 	table := NewTable()
 
 	description := NewDescription()
@@ -42,6 +48,12 @@ func NewApplication() *Application {
 
 	app := tview.NewApplication().
 		SetRoot(flex, true)
+
+	// https://github.com/rivo/tview/issues/270
+	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
+		s.Clear()
+		return false
+	})
 
 	return &Application{
 		Application: app,

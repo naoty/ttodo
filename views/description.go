@@ -1,6 +1,7 @@
 package views
 
 import (
+	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 )
 
@@ -15,7 +16,9 @@ type Description struct {
 // NewDescription returns a new Description.
 func NewDescription() *Description {
 	header := tview.NewTextView().
-		SetText("Description")
+		SetText("Description").
+		SetTextColor(tcell.ColorWhite)
+	header.SetBackgroundColor(tcell.Color32)
 
 	body := tview.NewTextView()
 
