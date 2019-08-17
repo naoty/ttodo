@@ -18,7 +18,9 @@ type Application struct {
 func NewApplication() *Application {
 	tview.Styles = tview.Theme{
 		PrimitiveBackgroundColor: tcell.ColorDefault,
+		ContrastBackgroundColor:  tcell.ColorBlue,
 		PrimaryTextColor:         tcell.ColorDefault,
+		SecondaryTextColor:       tcell.ColorDefault,
 	}
 
 	table := NewTable()
@@ -46,13 +48,31 @@ func NewApplication() *Application {
 		}
 	})
 
+	pages := tview.NewPages().
+		AddPage("list", flex, true, true)
+
+	form := NewForm(func() {
+		pages.SwitchToPage("list")
+	})
+	pages.AddPage("form", form, true, false)
+
 	app := tview.NewApplication().
-		SetRoot(flex, true)
+		SetRoot(pages, true)
 
 	// https://github.com/rivo/tview/issues/270
 	app.SetBeforeDrawFunc(func(s tcell.Screen) bool {
 		s.Clear()
 		return false
+	})
+
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'c':
+			pages.SwitchToPage("form")
+			return nil
+		default:
+			return event
+		}
 	})
 
 	return &Application{
