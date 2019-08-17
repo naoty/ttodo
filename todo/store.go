@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"sync"
+	"time"
 )
 
 var singletonStore *Store
@@ -17,8 +18,8 @@ type Store struct {
 	subscribers []chan []Todo
 }
 
-// GetStore initializes a singleton Store once.
-func GetStore(source io.Reader) *Store {
+// NewStore initializes a singleton Store once.
+func NewStore(source io.Reader) *Store {
 	once.Do(func() {
 		singletonStore = &Store{
 			todos:       []Todo{},
@@ -26,6 +27,11 @@ func GetStore(source io.Reader) *Store {
 			subscribers: []chan []Todo{},
 		}
 	})
+	return singletonStore
+}
+
+// GetStore returns a singleton store.
+func GetStore() *Store {
 	return singletonStore
 }
 
@@ -51,6 +57,19 @@ func (store *Store) LoadTodos() error {
 	store.publish()
 
 	return nil
+}
+
+// AppendTodo saves a Todo with given parameters.
+func (store *Store) AppendTodo(title, description, assignee string, deadline *time.Time) {
+	todo := Todo{
+		Title:       title,
+		Description: description,
+		Assignee:    assignee,
+		Deadline:    deadline,
+		Done:        false,
+	}
+	store.todos = append(store.todos, todo)
+	store.publish()
 }
 
 func (store *Store) publish() {

@@ -28,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	store := todo.GetStore(file)
+	store := todo.NewStore(file)
 	app := views.NewApplication()
 	app.Subscribe(store)
 
