@@ -18,7 +18,7 @@ func NewDescription() *Description {
 	header := tview.NewTextView().
 		SetText("Description").
 		SetTextColor(tcell.ColorWhite)
-	header.SetBackgroundColor(tcell.Color32)
+	header.SetBackgroundColor(tcell.ColorBlue)
 
 	body := tview.NewTextView()
 

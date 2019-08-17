@@ -21,7 +21,7 @@ func NewTable() *Table {
 		SetCell(0, 1, tview.NewTableCell("Deadline").SetSelectable(false)).
 		SetCell(0, 2, tview.NewTableCell("Assignee").SetSelectable(false)).
 		SetCell(0, 3, tview.NewTableCell("Title").SetSelectable(false).SetExpansion(1)).
-		SetSelectedStyle(tcell.ColorWhite, tcell.Color100, 0)
+		SetSelectedStyle(tcell.ColorWhite, tcell.ColorBlue, 0)
 
 	return &Table{
 		Table: table,
