@@ -41,6 +41,13 @@ func (store *Store) Register(subscriber chan []Todo) {
 	store.subscribers = append(store.subscribers, subscriber)
 }
 
+// UnregisterAll closes all subscribers.
+func (store *Store) UnregisterAll() {
+	for _, subscriber := range store.subscribers {
+		close(subscriber)
+	}
+}
+
 // LoadTodos loads todos from source.
 func (store *Store) LoadTodos() error {
 	data, err := ioutil.ReadAll(store.source)

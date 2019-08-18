@@ -37,8 +37,10 @@ func main() {
 
 	err = app.Run()
 
+	file.Close()
+	store.UnregisterAll()
+
 	if err != nil {
-		file.Close()
 		log.Fatal(err)
 	}
 }
