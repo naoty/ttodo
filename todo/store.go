@@ -121,6 +121,20 @@ func (store *Store) AppendTodo(title, description, assignee string, deadline *ti
 	store.SaveTodos()
 }
 
+// ToggleDone toggles done of the todo with given id.
+func (store *Store) ToggleDone(id uuid.UUID) {
+	todo, ok := store.todos[id]
+
+	if !ok {
+		return
+	}
+
+	todo.Done = !todo.Done
+	store.todos[id] = todo
+	store.publish()
+	store.SaveTodos()
+}
+
 func (store *Store) publish() {
 	todos := store.todosList()
 

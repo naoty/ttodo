@@ -25,6 +25,16 @@ func NewApplication() *Application {
 
 	table := NewTable()
 
+	table.SetInputCapture(func(t todo.Todo, event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'd':
+			todo.GetStore().ToggleDone(t.ID)
+			return nil
+		default:
+			return event
+		}
+	})
+
 	description := NewDescription()
 
 	flex := tview.NewFlex().

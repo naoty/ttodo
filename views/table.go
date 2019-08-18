@@ -29,6 +29,21 @@ func NewTable() *Table {
 	}
 }
 
+// SetInputCapture sets wrapper function to pass selected todo to original
+// function.
+func (table *Table) SetInputCapture(f func(todo.Todo, *tcell.EventKey) *tcell.EventKey) {
+	table.Table.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		row, _ := table.GetSelection()
+
+		if row == 0 || row > len(table.todos) {
+			return event
+		}
+
+		todo := table.todos[row-1]
+		return f(todo, event)
+	})
+}
+
 // SetSelectedFunc sets wrapper function to pass selected todo to original
 // function.
 func (table *Table) SetSelectedFunc(f func(todo.Todo)) {
