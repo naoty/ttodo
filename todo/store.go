@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"strings"
 	"sync"
 	"time"
 )
@@ -14,12 +15,12 @@ var once sync.Once
 // Store is the single source of truth for todos.
 type Store struct {
 	todos       []Todo
-	source      io.Reader
+	source      io.ReadWriteSeeker
 	subscribers []chan []Todo
 }
 
 // NewStore initializes a singleton Store once.
-func NewStore(source io.Reader) *Store {
+func NewStore(source io.ReadWriteSeeker) *Store {
 	once.Do(func() {
 		singletonStore = &Store{
 			todos:       []Todo{},
@@ -54,7 +55,31 @@ func (store *Store) LoadTodos() error {
 		return err
 	}
 
+	_, err = store.source.Seek(0, io.SeekStart)
+
+	if err != nil {
+		return err
+	}
+
 	store.publish()
+
+	return nil
+}
+
+// SaveTodos saves todos into source.
+func (store *Store) SaveTodos() error {
+	indent := strings.Repeat(" ", 4)
+	data, err := json.MarshalIndent(store.todos, "", indent)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = store.source.Write(data)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -70,6 +95,7 @@ func (store *Store) AppendTodo(title, description, assignee string, deadline *ti
 	}
 	store.todos = append(store.todos, todo)
 	store.publish()
+	store.SaveTodos()
 }
 
 func (store *Store) publish() {

@@ -22,9 +22,10 @@ func main() {
 		}
 	}
 
-	file, err := os.Open(todoPath())
+	file, err := os.OpenFile(todoPath(), os.O_RDWR|os.O_CREATE, 0644)
 
 	if err != nil {
+		file.Close()
 		log.Fatal(err)
 	}
 
@@ -37,6 +38,7 @@ func main() {
 	err = app.Run()
 
 	if err != nil {
+		file.Close()
 		log.Fatal(err)
 	}
 }
