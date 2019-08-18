@@ -7,6 +7,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 var singletonStore *Store
@@ -94,6 +96,7 @@ func (store *Store) SaveTodos() error {
 // AppendTodo saves a Todo with given parameters.
 func (store *Store) AppendTodo(title, description, assignee string, deadline *time.Time) {
 	todo := Todo{
+		ID:          uuid.New(),
 		Title:       title,
 		Description: description,
 		Assignee:    assignee,
