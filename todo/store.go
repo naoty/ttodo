@@ -97,6 +97,12 @@ func (store *Store) SaveTodos() error {
 		return err
 	}
 
+	_, err = store.source.Seek(0, io.SeekStart)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
