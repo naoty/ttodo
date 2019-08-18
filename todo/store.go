@@ -16,7 +16,7 @@ var once sync.Once
 
 // Store is the single source of truth for todos.
 type Store struct {
-	todos       []Todo
+	todos       map[uuid.UUID]Todo
 	source      io.ReadWriteSeeker
 	subscribers []chan []Todo
 }
@@ -25,7 +25,7 @@ type Store struct {
 func NewStore(source io.ReadWriteSeeker) *Store {
 	once.Do(func() {
 		singletonStore = &Store{
-			todos:       []Todo{},
+			todos:       map[uuid.UUID]Todo{},
 			source:      source,
 			subscribers: []chan []Todo{},
 		}
@@ -58,7 +58,8 @@ func (store *Store) LoadTodos() error {
 		return err
 	}
 
-	err = json.Unmarshal(data, &store.todos)
+	var todos []Todo
+	err = json.Unmarshal(data, &todos)
 
 	if err != nil {
 		return err
@@ -70,6 +71,10 @@ func (store *Store) LoadTodos() error {
 		return err
 	}
 
+	for _, todo := range todos {
+		store.todos[todo.ID] = todo
+	}
+
 	store.publish()
 
 	return nil
@@ -77,8 +82,10 @@ func (store *Store) LoadTodos() error {
 
 // SaveTodos saves todos into source.
 func (store *Store) SaveTodos() error {
+	todos := store.todosList()
+
 	indent := strings.Repeat(" ", 4)
-	data, err := json.MarshalIndent(store.todos, "", indent)
+	data, err := json.MarshalIndent(todos, "", indent)
 
 	if err != nil {
 		return err
@@ -103,15 +110,29 @@ func (store *Store) AppendTodo(title, description, assignee string, deadline *ti
 		Deadline:    deadline,
 		Done:        false,
 	}
-	store.todos = append(store.todos, todo)
+	store.todos[todo.ID] = todo
 	store.publish()
 	store.SaveTodos()
 }
 
 func (store *Store) publish() {
+	todos := store.todosList()
+
 	go func() {
 		for _, subscriber := range store.subscribers {
-			subscriber <- store.todos
+			subscriber <- todos
 		}
 	}()
+}
+
+func (store *Store) todosList() []Todo {
+	todos := make([]Todo, len(store.todos))
+
+	i := 0
+	for _, todo := range store.todos {
+		todos[i] = todo
+		i++
+	}
+
+	return todos
 }
