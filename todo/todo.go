@@ -9,6 +9,7 @@ import (
 // Todo represents a TODO.
 type Todo struct {
 	ID          uuid.UUID  `json:"id"`
+	NextID      *uuid.UUID `json:"nextId"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Assignee    string     `json:"assignee"`

@@ -17,6 +17,7 @@ var once sync.Once
 // Store is the single source of truth for todos.
 type Store struct {
 	todos       map[uuid.UUID]Todo
+	lastTodoID  *uuid.UUID
 	source      io.ReadWriteSeeker
 	subscribers []chan []Todo
 }
@@ -116,6 +117,15 @@ func (store *Store) AppendTodo(title, description, assignee string, deadline *ti
 		Deadline:    deadline,
 		Done:        false,
 	}
+
+	if store.lastTodoID != nil {
+		lastTodo := store.todos[*store.lastTodoID]
+		lastTodo.NextID = &todo.ID
+		store.todos[*store.lastTodoID] = lastTodo
+	}
+
+	store.lastTodoID = &todo.ID
+
 	store.todos[todo.ID] = todo
 	store.publish()
 	store.SaveTodos()
