@@ -10,6 +10,7 @@ import (
 type Todo struct {
 	ID          uuid.UUID  `json:"id"`
 	NextID      *uuid.UUID `json:"nextId"`
+	PreviousID  *uuid.UUID `json:"previousId"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
 	Assignee    string     `json:"assignee"`

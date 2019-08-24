@@ -75,6 +75,11 @@ func (store *Store) LoadTodos() error {
 
 	for _, todo := range todos {
 		store.todos[todo.ID] = todo
+
+		if todo.PreviousID == nil {
+			id := todo.ID
+			store.firstTodoID = &id
+		}
 	}
 
 	store.publish()
@@ -112,6 +117,7 @@ func (store *Store) SaveTodos() error {
 func (store *Store) AppendTodo(title, description, assignee string, deadline *time.Time) {
 	todo := Todo{
 		ID:          uuid.New(),
+		PreviousID:  store.lastTodoID,
 		Title:       title,
 		Description: description,
 		Assignee:    assignee,
@@ -167,15 +173,14 @@ func (store *Store) todosList() []Todo {
 	nextID := store.firstTodoID
 
 	for {
-		todo := store.todos[*nextID]
-		todos[i] = todo
-		nextID = todo.NextID
-
 		if nextID == nil {
 			break
-		} else {
-			i++
 		}
+
+		todo := store.todos[*nextID]
+		todos[i] = todo
+		i++
+		nextID = todo.NextID
 	}
 
 	return todos
